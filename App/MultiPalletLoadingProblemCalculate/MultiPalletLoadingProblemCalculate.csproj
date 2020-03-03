@@ -50,6 +50,7 @@
     <Compile Include="gnetic\ChromosomeModel.cs" />
     <Compile Include="gnetic\GeneModel.cs" />
     <Compile Include="gnetic\GeneticInterface.cs" />
+    <Compile Include="gnetic\GeneticProcess.cs" />
     <Compile Include="PalletModel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

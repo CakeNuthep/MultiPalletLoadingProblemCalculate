@@ -9,10 +9,10 @@ namespace MultiPalletLoadingProblemCalculate.gnetic
     interface GeneticInterface
     {
         void Initialpopulation(int number);
-        List<Object> GetBestChromosome(int number);
-        Object SinglePointCrossover(int numberTopChromosome, int numberOtherChromosome);
+        Object GetBestChromosome(int number);
+        void SinglePointCrossover(int numberTopChromosome, int numberOtherChromosome);
         List<Object> getFitessValue(int number);
-        bool IsMustMutation();
-        List<Object> Operation();
+        bool IsMustMutation(double ratio);
+        List<Object> Operation(int maxLoop);
     }
 }

@@ -8,6 +8,7 @@ namespace MultiPalletLoadingProblemCalculate.gnetic
 {
     class Chromosome : ChromosomeInterface
     {
+        double alpha;
         int size;
         double score;
         ChromosomeModel chromosome;
@@ -17,19 +18,35 @@ namespace MultiPalletLoadingProblemCalculate.gnetic
         List<BoxModel> lookUpBoxModel, lookUpBoxModelTemp;
         List<PalletModel> lookUpPalletModel;
 
-        public Chromosome(List<BoxModel> lookUpBoxModel, List<PalletModel> lookUpPalletModel,int size)
+        public Object getChromosome()
         {
-            
-            chromosome = (ChromosomeModel)randomChromosome(size);
+            return this.chromosome;
+        }
+
+        private Chromosome(List<BoxModel> lookUpBoxModel, List<PalletModel> lookUpPalletModel, ChromosomeModel chromosome , int size, double alpha)
+        {
             this.lookUpBoxModel = lookUpBoxModel;
             this.lookUpPalletModel = lookUpPalletModel;
             this.size = size;
+            this.alpha = alpha;
+            this.chromosome = chromosome;
+
+        }
+
+        public Chromosome(List<BoxModel> lookUpBoxModel, List<PalletModel> lookUpPalletModel,int size,double alpha)
+        {
+            this.lookUpBoxModel = lookUpBoxModel;
+            this.lookUpPalletModel = lookUpPalletModel;
+            this.size = size;
+            this.alpha = alpha;
+            chromosome = (ChromosomeModel)randomChromosome(size);
             
         }
 
         public List<Object> crossover(object chromosome, int[] listIndexGene)
         {
-            ChromosomeModel offspringChromosome1 = ((ChromosomeModel)chromosome).Copy();
+            Object chromosomeData = ((Chromosome)chromosome).getChromosome();
+            ChromosomeModel offspringChromosome1 = ((ChromosomeModel)chromosomeData).Copy();
             ChromosomeModel offspringChromosome2 = (this.chromosome).Copy();
             for (int i = 0; i < listIndexGene.Length; i++)
             {
@@ -39,7 +56,7 @@ namespace MultiPalletLoadingProblemCalculate.gnetic
                     int indexGene = listIndexGene[i];
                     if (indexGene == INDEX_GENE1 || indexGene == INDEX_GENE2 || indexGene == INDEX_GENE3)
                     {
-                        GeneModel parentGene1 = ((ChromosomeModel)chromosome).listGene[indexGene];
+                        GeneModel parentGene1 = ((ChromosomeModel)chromosomeData).listGene[indexGene];
                         GeneModel parentGene2 = this.chromosome.listGene[indexGene];
                         GeneModel offspringGene1 = offspringChromosome1.listGene[indexGene];
                         GeneModel offspringGene2 = offspringChromosome2.listGene[indexGene];
@@ -52,7 +69,8 @@ namespace MultiPalletLoadingProblemCalculate.gnetic
                     }
                 }
             }
-            return new List<object> { offspringChromosome1, offspringChromosome2 };
+            return new List<object> { new Chromosome(this.lookUpBoxModel,this.lookUpPalletModel,offspringChromosome1,this.size,this.alpha)
+                                     , new Chromosome(this.lookUpBoxModel,this.lookUpPalletModel,offspringChromosome2,this.size,this.alpha) };
 
         }
 
@@ -150,7 +168,7 @@ namespace MultiPalletLoadingProblemCalculate.gnetic
                     float totalVolumnBox = lookUpBoxModel[indexBox].Volumn * numberBox;
                     float totalWeight = lookUpBoxModel[indexBox].Weight * numberBox;
 
-                    int numberPallet = Math.Min((int)Math.Ceiling(totalVolumnBox / lookUpPalletModel[indexPallet].VolumnMax),
+                    int numberPallet = Math.Min((int)Math.Ceiling(totalVolumnBox*alpha / lookUpPalletModel[indexPallet].VolumnMax),
                         (int)Math.Ceiling(totalWeight/lookUpPalletModel[indexPallet].WeightMax));
                     score += this.lookUpPalletModel[indexPallet].CrossSectionalArea * numberPallet;
                 }
@@ -208,7 +226,7 @@ namespace MultiPalletLoadingProblemCalculate.gnetic
         {
             int sizeGene1 = lookUpBoxModelTemp.Count;
             Random rnd = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-            int randomValue = rnd.Next(1, sizeGene1);
+            int randomValue = rnd.Next(0, sizeGene1-1);
             lookUpBoxModelTemp.RemoveAt(randomValue);
             return randomValue;
         }
