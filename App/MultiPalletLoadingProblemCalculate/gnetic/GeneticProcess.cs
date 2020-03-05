@@ -45,7 +45,7 @@ namespace MultiPalletLoadingProblemCalculate.gnetic
         {
             double value1 = chromosome1.getValue();
             double value2 = chromosome2.getValue();
-            return value1.CompareTo(value2) * -1;
+            return value1.CompareTo(value2);
         }
 
         

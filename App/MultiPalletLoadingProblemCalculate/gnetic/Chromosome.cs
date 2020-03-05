@@ -87,8 +87,8 @@ namespace MultiPalletLoadingProblemCalculate.gnetic
             //decode Gene1
             foreach (float index in gene1.gene)
             {
-                decodeData.ListBoxIndex.Add(listBoxModel[(int)index].Index);
-                listBoxModel.RemoveAt((int)index);
+                decodeData.ListBoxIndex.Add(listBoxModel[(int)index-1].Index);
+                listBoxModel.RemoveAt((int)index-1);
             }
 
             foreach(float ratio in gene2.gene)
@@ -226,8 +226,8 @@ namespace MultiPalletLoadingProblemCalculate.gnetic
         {
             int sizeGene1 = lookUpBoxModelTemp.Count;
             Random rnd = new Random((int)DateTime.Now.Ticks & 0x0000FFFF);
-            int randomValue = rnd.Next(0, sizeGene1-1);
-            lookUpBoxModelTemp.RemoveAt(randomValue);
+            int randomValue = rnd.Next(1, sizeGene1);
+            lookUpBoxModelTemp.RemoveAt(randomValue-1);
             return randomValue;
         }
 
