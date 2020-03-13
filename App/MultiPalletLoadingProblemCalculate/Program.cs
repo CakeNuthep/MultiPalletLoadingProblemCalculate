@@ -25,9 +25,12 @@ namespace MultiPalletLoadingProblemCalculate
 
 
             GeneticProcess genetic = new GeneticProcess(listBoxModel,listPalletModel,0.8);
-            genetic.Initialpopulation(50);
-            List<Object> result = genetic.Operation(100);
-            List<Chromosome> listBestChromosome = result.Cast<Chromosome>().ToList();
+            if (genetic.Initialpopulation(50))
+            {
+                List<Object> result = genetic.Operation(10000);
+                List<Chromosome> listBestChromosome = result.Cast<Chromosome>().ToList();
+            }
+            
         }
     }
 }

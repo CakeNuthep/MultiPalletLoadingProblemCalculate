@@ -50,16 +50,48 @@ namespace MultiPalletLoadingProblemCalculate.gnetic
 
         
 
-        public void Initialpopulation(int number)
+        public bool Initialpopulation(int number)
         {
+            if(!RuleCorrect())
+            {
+                return false;   
+            }
             this.numberPpopulation = number;
             for (int i=0; i<number;i++)
             {
                 Chromosome chromosome = new Chromosome(this.lookUpBoxModel,this.lookUpPalletModel,this.lookUpBoxModel.Count, alpha);
                 Population.Add(chromosome);
             }
-
+            return true;
         }
+
+        public bool RuleCorrect()
+        {
+            /*
+             * จานวนปริมาตรรวมกล่องสินค้าของกล่องสินค้า ประเภทขนาดใด ๆ 
+             * ต้องไม่เกินสองเท่าของปริมาตรความจุ 
+             * สูงสุดของพาเลทประเภทที่มีปริมาตรความจุน้อยที่สุด
+             * */
+            //find min volumn pallet
+            double minVolumn = double.MaxValue;
+            foreach(PalletModel pallet in lookUpPalletModel)
+            {
+                if(minVolumn > pallet.VolumnMax)
+                {
+                    minVolumn = pallet.VolumnMax;
+                }
+            }
+
+            foreach(BoxModel box in lookUpBoxModel)
+            {
+                if(box.Volumn > 2 * alpha * minVolumn)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
 
         public bool IsMustMutation(double ratio = 0.1)
         {

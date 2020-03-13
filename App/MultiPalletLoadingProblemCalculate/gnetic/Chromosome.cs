@@ -130,47 +130,86 @@ namespace MultiPalletLoadingProblemCalculate.gnetic
 
         public double getValue()
         {
+            //DecodeModel decodeData = (DecodeModel)decodeChromosome();
+            //float score = 0;
+            //for(int i=0;i<size;i++)
+            //{
+            //    int indexBox = -1, indexPallet = -1;
+            //    float ratio = -1;
+            //    if(i < decodeData.ListBoxIndex.Count)
+            //    {
+            //        indexBox = decodeData.ListBoxIndex[i];
+            //    }
+
+            //    if (i < decodeData.ListPalletIndex.Count)
+            //    {
+            //        indexPallet = decodeData.ListPalletIndex[i];
+            //    }
+
+            //    if (i < decodeData.ListRatio.Count)
+            //    {
+            //        ratio = decodeData.ListRatio[i];
+            //    }
+
+            //    if(indexBox != -1 && indexPallet != -1 && ratio != -1 )
+            //    {
+            //        float numberBox1 = ratio * lookUpBoxModel[indexBox].NumberBoxs;
+            //        float numberBox2 = lookUpBoxModel[indexBox].NumberBoxs - numberBox1;
+            //        int numberBox = 0;
+            //        if (numberBox1 > numberBox2)
+            //        {
+            //            numberBox = (int)Math.Ceiling(numberBox1);
+            //        }
+            //        else
+            //        {
+            //            numberBox = (int)Math.Floor(numberBox1);
+            //        }
+
+            //        float totalVolumnBox = lookUpBoxModel[indexBox].Volumn * numberBox;
+            //        float totalWeight = lookUpBoxModel[indexBox].Weight * numberBox;
+
+            //        int numberPallet = Math.Min((int)Math.Ceiling(totalVolumnBox / lookUpPalletModel[indexPallet].VolumnMax),
+            //            (int)Math.Ceiling(totalWeight/lookUpPalletModel[indexPallet].WeightMax));
+            //        score += this.lookUpPalletModel[indexPallet].CrossSectionalArea * numberPallet;
+            //    }
+            //}
+            //return score;
             DecodeModel decodeData = (DecodeModel)decodeChromosome();
             float score = 0;
-            for(int i=0;i<size;i++)
+            foreach (int indexBox in decodeData.ListBoxIndex)
             {
-                int indexBox = -1, indexPallet = -1;
                 float ratio = -1;
-                if(i < decodeData.ListBoxIndex.Count)
+                ratio = decodeData.ListRatio[indexBox];
+                float numberBox1 = ratio * lookUpBoxModel[indexBox].NumberBoxs;
+                float numberBox2 = lookUpBoxModel[indexBox].NumberBoxs - numberBox1;
+                if (numberBox1 > numberBox2)
                 {
-                    indexBox = decodeData.ListBoxIndex[i];
+                    numberBox1 = (int)Math.Ceiling(numberBox1);
+                    numberBox2 = (int)Math.Floor(numberBox2);
                 }
-
-                if (i < decodeData.ListPalletIndex.Count)
+                else
                 {
-                    indexPallet = decodeData.ListPalletIndex[i];
+                    numberBox1 = (int)Math.Floor(numberBox1);
+                    numberBox2 = (int)Math.Ceiling(numberBox2);
                 }
-
-                if (i < decodeData.ListRatio.Count)
+                List<int> listPbx = new List<int>();
+                listPbx.Add((int)numberBox1);
+                listPbx.Add((int)numberBox2);
+                listPbx.Sort();
+                foreach (int pbx in listPbx)
                 {
-                    ratio = decodeData.ListRatio[i];
-                }
-
-                if(indexBox != -1 && indexPallet != -1 && ratio != -1 )
-                {
-                    float numberBox1 = ratio * lookUpBoxModel[indexBox].NumberBoxs;
-                    float numberBox2 = lookUpBoxModel[indexBox].NumberBoxs - numberBox1;
-                    int numberBox = 0;
-                    if (numberBox1 > numberBox2)
+                    foreach (int indexPallet in decodeData.ListPalletIndex)
                     {
-                        numberBox = (int)Math.Ceiling(numberBox1);
-                    }
-                    else
-                    {
-                        numberBox = (int)Math.Floor(numberBox1);
-                    }
+                        float totalVolumnBox = lookUpBoxModel[indexBox].Volumn * pbx;
+                        float totalWeight = lookUpBoxModel[indexBox].Weight * pbx;
 
-                    float totalVolumnBox = lookUpBoxModel[indexBox].Volumn * numberBox;
-                    float totalWeight = lookUpBoxModel[indexBox].Weight * numberBox;
 
-                    int numberPallet = Math.Min((int)Math.Ceiling(totalVolumnBox*alpha / lookUpPalletModel[indexPallet].VolumnMax),
-                        (int)Math.Ceiling(totalWeight/lookUpPalletModel[indexPallet].WeightMax));
-                    score += this.lookUpPalletModel[indexPallet].CrossSectionalArea * numberPallet;
+                        if (totalVolumnBox <= this.lookUpPalletModel[indexPallet].VolumnMax
+                            && totalWeight <= this.lookUpPalletModel[indexPallet].WeightMax)
+                        {
+                            score += this.lookUpPalletModel[indexPallet].CrossSectionalArea;
+                        }
+                    }
                 }
             }
             return score;

@@ -8,7 +8,7 @@ namespace MultiPalletLoadingProblemCalculate.gnetic
 {
     interface GeneticInterface
     {
-        void Initialpopulation(int number);
+        bool Initialpopulation(int number);
         Object GetBestChromosome(int number);
         void SinglePointCrossover(int numberTopChromosome, int numberOtherChromosome);
         List<Object> getFitessValue(int number);
